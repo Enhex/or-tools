@@ -23,10 +23,6 @@ GLOG_TAG = 0.3.5
 CBC_TAG = 2.9.9
 PATCHELF_TAG = 0.9
 
-ifeq ($(PLATFORM), MACOSX)
-  SET_COMPILER = CXX="$(CCC)"
-endif
-
 # Main target.
 .PHONY: third_party # Build OR-Tools Prerequisite
 third_party: makefile_third_party install_third_party

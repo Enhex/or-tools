@@ -219,7 +219,7 @@ ifeq ($(PLATFORM),MACOSX)
   endif
 
   SYS_LNK =
-
+  SET_COMPILER = CXX="$(CCC)"
   JAVA_INC = -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/darwin
   JAVAC_BIN = $(shell $(WHICH) $(JAVA_HOME)/bin/javac)
   JAVA_BIN = $(shell $(WHICH) $(JAVA_HOME)/bin/java)
