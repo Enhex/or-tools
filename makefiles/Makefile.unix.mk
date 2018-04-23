@@ -2,19 +2,6 @@
 #  ----- configuration is not standard. In that case, please tell us -----
 #  ----- about it. -----
 
-# Checks if the user has overwritten default libraries and binaries.
-
-UNIX_GFLAGS_DIR ?= $(OR_TOOLS_TOP)/dependencies/install
-UNIX_GLOG_DIR ?= $(OR_TOOLS_TOP)/dependencies/install
-UNIX_PROTOBUF_DIR ?= $(OR_TOOLS_TOP)/dependencies/install
-UNIX_CBC_DIR ?= $(OR_ROOT_FULL)/dependencies/install
-UNIX_CLP_DIR ?= $(UNIX_CBC_DIR)
-
-# Unix specific definitions
-PROTOBUF_DIR = $(UNIX_PROTOBUF_DIR)
-UNIX_SWIG_BINARY ?= swig
-SWIG_BINARY = $(UNIX_SWIG_BINARY)
-
 MKDIR = mkdir
 MKDIR_P = mkdir -p
 COPY = cp
