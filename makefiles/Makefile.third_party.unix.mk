@@ -177,11 +177,6 @@ dependencies/install/lib/protobuf.jar: dependencies/install/bin/protoc
 	  ../src/google/protobuf/descriptor.proto
 	cd dependencies/sources/protobuf-$(PROTOBUF_TAG)/java/core/src/main/java && $(JAVAC_BIN) com/google/protobuf/*java
 	cd dependencies/sources/protobuf-$(PROTOBUF_TAG)/java/core/src/main/java && $(JAR_BIN) cvf ../../../../../../../install/lib/protobuf.jar com/google/protobuf/*class
-
-# Install C# protobuf
-
-#create .snk file if strong named dll is required (this is the default behaviour)
-
 .PHONY: clean_third_party # Clean everything. Remember to also delete archived dependencies, i.e. in the event of download failure, etc.
 clean_third_party:
 	-$(DEL) Makefile.local
