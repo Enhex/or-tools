@@ -131,6 +131,10 @@ GLOG_INC = -I$(UNIX_GLOG_DIR)/include
 GLOG_LNK = $(UNIX_GLOG_DIR)/lib/libglog.a
 DYNAMIC_GLOG_LNK = $(UNIX_GLOG_DIR)/lib/libglog.$(LIB_SUFFIX)
 
+################
+##  Protobuf  ##
+################
+# This uses Protobuf cmake-based build.
 install_protobuf: dependencies/install/bin/protoc
 
 dependencies/install/bin/protoc: dependencies/sources/protobuf-$(PROTOBUF_TAG)/cmake/build/Makefile
@@ -139,16 +143,37 @@ dependencies/install/bin/protoc: dependencies/sources/protobuf-$(PROTOBUF_TAG)/c
 dependencies/sources/protobuf-$(PROTOBUF_TAG)/cmake/build/Makefile: dependencies/sources/protobuf-$(PROTOBUF_TAG)/cmake/CMakeLists.txt
 	-$(MKDIR) dependencies/sources/protobuf-$(PROTOBUF_TAG)/cmake/build
 	cd dependencies/sources/protobuf-$(PROTOBUF_TAG)/cmake/build && \
-	  $(CMAKE) -D CMAKE_INSTALL_PREFIX=../../../../install \
-		   -D protobuf_BUILD_TESTS=OFF \
-                   -D BUILD_SHARED_LIBS=OFF \
-                   -D CMAKE_CXX_FLAGS="-fPIC $(MAC_VERSION)" \
-	           ..
+	$(CMAKE) -D CMAKE_INSTALL_PREFIX=../../../../install \
+           -D protobuf_BUILD_TESTS=OFF \
+           -D BUILD_SHARED_LIBS=OFF \
+           -D CMAKE_CXX_FLAGS="-fPIC $(MAC_VERSION)" \
+           ..
 
 dependencies/sources/protobuf-$(PROTOBUF_TAG)/cmake/CMakeLists.txt:
 	git clone --quiet https://github.com/google/protobuf.git dependencies/sources/protobuf-$(PROTOBUF_TAG) && \
 		cd dependencies/sources/protobuf-$(PROTOBUF_TAG) && \
 		git checkout tags/v$(PROTOBUF_TAG) -b $(PROTOBUF_TAG)
+
+# Install Java protobuf
+dependencies/install/lib/protobuf.jar: dependencies/install/bin/protoc
+	cd dependencies/sources/protobuf-$(PROTOBUF_TAG)/java && \
+	  ../../../install/bin/protoc --java_out=core/src/main/java -I../src \
+	  ../src/google/protobuf/descriptor.proto
+	cd dependencies/sources/protobuf-$(PROTOBUF_TAG)/java/core/src/main/java && \
+		$(JAVAC_BIN) com/google/protobuf/*java
+	cd dependencies/sources/protobuf-$(PROTOBUF_TAG)/java/core/src/main/java && \
+		$(JAR_BIN) cvf ../../../../../../../install/lib/protobuf.jar com/google/protobuf/*class
+
+# This is needed to find protocol buffers.
+PROTOBUF_INC = -I$(UNIX_PROTOBUF_DIR)/include
+PROTOBUF_PROTOC_INC = $(PROTOBUF_INC)
+# libprotobuf.a goes in a different subdirectory depending on the distribution
+# and architecture, eg. "lib/" or "lib64/" for Fedora and Centos,
+# "lib/x86_64-linux-gnu/" for Ubuntu (all on 64 bits), etc. So we wildcard it.
+PROTOBUF_LNK = $(wildcard $(UNIX_PROTOBUF_DIR)/lib*/libprotobuf.a \
+                          $(UNIX_PROTOBUF_DIR)/lib/*/libprotobuf.a)
+DYNAMIC_PROTOBUF_LNK = $(wildcard $(UNIX_PROTOBUF_DIR)/lib*/libprotobuf.$(LIB_SUFFIX) \
+                                  $(UNIX_PROTOBUF_DIR)/lib/*/libprotobuf.$(LIB_SUFFIX))
 
 # Install Coin CBC.
 install_cbc: dependencies/install/bin/cbc
@@ -185,13 +210,6 @@ dependencies/sources/patchelf-$(PATCHELF_TAG)/configure:
 	git clone --quiet -b $(PATCHELF_TAG) https://github.com/NixOS/patchelf.git dependencies/sources/patchelf-$(PATCHELF_TAG)
 	cd dependencies/sources/patchelf-$(PATCHELF_TAG) && ./bootstrap.sh
 
-# Install Java protobuf
-dependencies/install/lib/protobuf.jar: dependencies/install/bin/protoc
-	cd dependencies/sources/protobuf-$(PROTOBUF_TAG)/java && \
-	  ../../../install/bin/protoc --java_out=core/src/main/java -I../src \
-	  ../src/google/protobuf/descriptor.proto
-	cd dependencies/sources/protobuf-$(PROTOBUF_TAG)/java/core/src/main/java && $(JAVAC_BIN) com/google/protobuf/*java
-	cd dependencies/sources/protobuf-$(PROTOBUF_TAG)/java/core/src/main/java && $(JAR_BIN) cvf ../../../../../../../install/lib/protobuf.jar com/google/protobuf/*class
 .PHONY: clean_third_party # Clean everything. Remember to also delete archived dependencies, i.e. in the event of download failure, etc.
 clean_third_party:
 	-$(DEL) Makefile.local
