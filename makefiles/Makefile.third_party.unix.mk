@@ -175,6 +175,9 @@ PROTOBUF_LNK = $(wildcard $(UNIX_PROTOBUF_DIR)/lib*/libprotobuf.a \
 DYNAMIC_PROTOBUF_LNK = $(wildcard $(UNIX_PROTOBUF_DIR)/lib*/libprotobuf.$(LIB_SUFFIX) \
                                   $(UNIX_PROTOBUF_DIR)/lib/*/libprotobuf.$(LIB_SUFFIX))
 
+###################
+##  COIN-OR CBC  ##
+###################
 # Install Coin CBC.
 install_cbc: dependencies/install/bin/cbc
 
@@ -182,15 +185,56 @@ dependencies/install/bin/cbc: dependencies/sources/Cbc-$(CBC_TAG)/Makefile
 	cd dependencies/sources/Cbc-$(CBC_TAG) && $(SET_COMPILER) make -j 4 && $(SET_COMPILER) make install
 
 dependencies/sources/Cbc-$(CBC_TAG)/Makefile: dependencies/sources/Cbc-$(CBC_TAG)/Makefile.in
-	cd dependencies/sources/Cbc-$(CBC_TAG) && $(SET_COMPILER) ./configure --prefix=$(OR_ROOT_FULL)/dependencies/install --disable-bzlib --without-lapack --enable-static --with-pic --enable-cbc-parallel ADD_CXXFLAGS="-w -DCBC_THREAD_SAFE -DCBC_NO_INTERRUPT $(MAC_VERSION)"
+	cd dependencies/sources/Cbc-$(CBC_TAG) && \
+		$(SET_COMPILER) ./configure --prefix=$(OR_ROOT_FULL)/dependencies/install \
+		--disable-bzlib --without-lapack --enable-static --with-pic \
+		--enable-cbc-parallel ADD_CXXFLAGS="-w -DCBC_THREAD_SAFE -DCBC_NO_INTERRUPT $(MAC_VERSION)"
 
 CBC_ARCHIVE:=https://www.coin-or.org/download/source/Cbc/Cbc-${CBC_TAG}.tgz
 
 dependencies/sources/Cbc-$(CBC_TAG)/Makefile.in:
-	wget --quiet --no-check-certificate --continue -P dependencies/archives ${CBC_ARCHIVE} || (@echo wget failed to dowload $(CBC_ARCHIVE), try running 'wget -P dependencies/archives --no-check-certificate $(CBC_ARCHIVE)' then rerun 'make third_party' && exit 1)
+	wget --quiet --no-check-certificate --continue -P dependencies/archives ${CBC_ARCHIVE} || \
+		(@echo wget failed to dowload $(CBC_ARCHIVE), try running 'wget -P dependencies/archives --no-check-certificate $(CBC_ARCHIVE)' then rerun 'make third_party' && exit 1)
 	tar xzf dependencies/archives/Cbc-${CBC_TAG}.tgz -C dependencies/sources/
 
-# Install patchelf on linux platforms.
+# This is needed to find Coin Branch and Cut include files.
+CBC_INC = -I$(UNIX_CBC_DIR)/include -I$(UNIX_CBC_DIR)/include/coin -DUSE_CBC
+CBC_SWIG = $(CBC_INC)
+# This is needed to find Coin LP include files.
+CLP_INC = -I$(UNIX_CLP_DIR)/include -I$(UNIX_CLP_DIR)/include/coin -DUSE_CLP
+CLP_SWIG = $(CLP_INC)
+# Install Path used when installing coin using pkgsource
+# e.g. brew coin-or-tools/homebrew-coinor/cbc.rb
+COIN_INC = -I$(UNIX_CBC_DIR)/include/coinutils/coin \
+           -I$(UNIX_CBC_DIR)/include/osi/coin \
+           -I$(UNIX_CBC_DIR)/include/cbc/coin \
+           -I$(UNIX_CLP_DIR)/include/clp/coin
+COIN_SWIG = $(COIN_INC)
+# Check wether CBC need a coin subdir in library.
+ifneq ($(wildcard $(UNIX_CBC_DIR)/lib/coin),)
+ UNIX_CBC_COIN = /coin
+endif
+ifneq ($(wildcard $(UNIX_CLP_DIR)/lib/coin),)
+ UNIX_CLP_COIN = /coin
+endif
+COIN_LNK = $(UNIX_CLP_DIR)/lib$(UNIX_CLP_COIN)/libCoinUtils.a \
+           $(UNIX_CBC_DIR)/lib$(UNIX_CBC_COIN)/libCgl.a \
+           $(UNIX_CBC_DIR)/lib$(UNIX_CBC_COIN)/libOsi.a
+CBC_LNK = $(UNIX_CBC_DIR)/lib$(UNIX_CBC_COIN)/libCbcSolver.a \
+          $(UNIX_CBC_DIR)/lib$(UNIX_CBC_COIN)/libCbc.a \
+          $(UNIX_CBC_DIR)/lib$(UNIX_CBC_COIN)/libOsiCbc.a
+CLP_LNK = $(UNIX_CBC_DIR)/lib$(UNIX_CBC_COIN)/libClpSolver.a \
+          $(UNIX_CLP_DIR)/lib$(UNIX_CLP_COIN)/libClp.a \
+          $(UNIX_CLP_DIR)/lib$(UNIX_CLP_COIN)/libOsiClp.a
+DYNAMIC_COIN_LNK = $(UNIX_CLP_DIR)/lib$(UNIX_CLP_COIN)/libCoinUtils.$(LIB_SUFFIX) \
+                   $(UNIX_CBC_DIR)/lib$(UNIX_CBC_COIN)/libCgl.$(LIB_SUFFIX) \
+                   $(UNIX_CBC_DIR)/lib$(UNIX_CBC_COIN)/libOsi.$(LIB_SUFFIX)
+DYNAMIC_CBC_LNK = $(UNIX_CBC_DIR)/lib$(UNIX_CBC_COIN)/libCbcSolver.$(LIB_SUFFIX) \
+                  $(UNIX_CBC_DIR)/lib$(UNIX_CBC_COIN)/libCbc.$(LIB_SUFFIX) \
+                  $(UNIX_CBC_DIR)/lib$(UNIX_CBC_COIN)/libOsiCbc.$(LIB_SUFFIX)
+DYNAMIC_CLP_LNK = $(UNIX_CBC_DIR)/lib$(UNIX_CBC_COIN)/libClpSolver.$(LIB_SUFFIX) \
+                  $(UNIX_CLP_DIR)/lib$(UNIX_CLP_COIN)/libClp.$(LIB_SUFFIX) \
+                  $(UNIX_CLP_DIR)/lib$(UNIX_CLP_COIN)/libOsiClp.$(LIB_SUFFIX)
 
 ############################################
 ##  Install Patchelf on linux platforms.  ##
