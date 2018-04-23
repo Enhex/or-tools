@@ -236,6 +236,19 @@ DYNAMIC_CLP_LNK = $(UNIX_CBC_DIR)/lib$(UNIX_CBC_COIN)/libClpSolver.$(LIB_SUFFIX)
                   $(UNIX_CLP_DIR)/lib$(UNIX_CLP_COIN)/libClp.$(LIB_SUFFIX) \
                   $(UNIX_CLP_DIR)/lib$(UNIX_CLP_COIN)/libOsiClp.$(LIB_SUFFIX)
 
+##################################
+##  USE DYNAMIC DEPENDENCIES ?  ##
+##################################
+ifdef UNIX_DYNAMIC_DEPENDENCIES
+  DEPENDENCIES_LNK += \
+   $(DYNAMIC_GFLAGS_LNK) $(DYNAMIC_GLOG_LNK) $(DYNAMIC_PROTOBUF_LNK) \
+   $(DYNAMIC_COIN_LNK) $(DYNAMIC_CBC_LNK) $(DYNAMIC_CLP_LNK)
+else
+  DEPENDENCIES_LNK += \
+   $(GFLAGS_LNK) $(GLOG_LNK) $(PROTOBUF_LNK) \
+   $(COIN_LNK) $(CBC_LNK) $(CLP_LNK)
+endif
+
 ############################################
 ##  Install Patchelf on linux platforms.  ##
 ############################################
