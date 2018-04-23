@@ -169,6 +169,7 @@ ifeq ($(PLATFORM),LINUX)
   JAVA_BIN = $(shell $(WHICH) $(JAVA_HOME)/bin/java)
   JAR_BIN = $(shell $(WHICH) $(JAVA_HOME)/bin/jar)
   JNI_LIB_EXT = so
+
   LIB_SUFFIX = so
   SWIG_LIB_SUFFIX = so
   LINK_CMD = g++ -shared
@@ -181,7 +182,6 @@ ifeq ($(PLATFORM),MACOSX)
   CCC = clang++ -fPIC -std=c++11  $(MAC_VERSION) -stdlib=libc++
   DYNAMIC_LD = ld -arch x86_64 -bundle -flat_namespace -undefined suppress -macosx_version_min $(MAC_MIN_VERSION) -lSystem -compatibility_version $(OR_TOOLS_SHORT_VERSION) -current_version $(OR_TOOLS_SHORT_VERSION)
 
-  JNI_LIB_EXT = jnilib
   MONO =  DYLD_FALLBACK_LIBRARY_PATH=$(LIB_DIR):$(DYLD_LIBRARY_PATH) $(MONO_EXECUTABLE)
 
   ZLIB_LNK = -lz
@@ -217,20 +217,20 @@ ifeq ($(PLATFORM),MACOSX)
   ifdef UNIX_CPLEX_DIR
     CPLEX_LNK = -force_load $(UNIX_CPLEX_DIR)/cplex/lib/x86-64_osx/static_pic/libcplex.a -lm -lpthread -framework CoreFoundation -framework IOKit
   endif
-
   SYS_LNK =
   SET_COMPILER = CXX="$(CCC)"
   JAVA_INC = -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/darwin
   JAVAC_BIN = $(shell $(WHICH) $(JAVA_HOME)/bin/javac)
   JAVA_BIN = $(shell $(WHICH) $(JAVA_HOME)/bin/java)
   JAR_BIN = $(shell $(WHICH) $(JAVA_HOME)/bin/jar)
+  JNI_LIB_EXT = jnilib
 
-  PRE_LIB = -L$(OR_ROOT)lib -l
-  POST_LIB =
   LIB_SUFFIX = dylib
   SWIG_LIB_SUFFIX = so# To overcome a bug in Mac OS X loader.
   LINK_CMD = ld -arch x86_64 -dylib -flat_namespace -undefined suppress -macosx_version_min $(MAC_MIN_VERSION) -lSystem -compatibility_version $(OR_TOOLS_SHORT_VERSION) -current_version $(OR_TOOLS_SHORT_VERSION)
   LINK_PREFIX = -o # Space needed.
+  PRE_LIB = -L$(OR_ROOT)lib -l
+  POST_LIB =
 endif  # MAC OS X
 
 DEPENDENCIES_INC = -I$(INC_DIR) -I$(EX_DIR) -I$(GEN_DIR) \
