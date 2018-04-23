@@ -76,7 +76,10 @@ dependencies/install/include: dependencies/install
 dependencies/install/include/coin: dependencies/install/include
 	$(MKDIR_P) dependencies$Sinstall$Sinclude$Scoin
 
-# Install gflags. This uses cmake.
+##############
+##  GFLAGS  ##
+##############
+# This uses gflags cmake-based build.
 install_gflags: dependencies/install/include/gflags/gflags.h
 
 dependencies/install/include/gflags/gflags.h: dependencies/sources/gflags-$(GFLAGS_TAG)/build_cmake/Makefile
@@ -88,15 +91,19 @@ dependencies/sources/gflags-$(GFLAGS_TAG)/build_cmake/Makefile: dependencies/sou
 	-mkdir dependencies/sources/gflags-$(GFLAGS_TAG)/build_cmake
 	cd dependencies/sources/gflags-$(GFLAGS_TAG)/build_cmake && $(SET_COMPILER) \
 	$(CMAKE) -D BUILD_SHARED_LIBS=OFF \
-		 -D BUILD_STATIC_LIBS=ON \
-	         -D CMAKE_INSTALL_PREFIX=../../../install \
-		 -D CMAKE_CXX_FLAGS="-fPIC $(MAC_VERSION)" \
-	         ..
+           -D BUILD_STATIC_LIBS=ON \
+           -D CMAKE_CXX_FLAGS="-fPIC $(MAC_VERSION)" \
+           -D CMAKE_INSTALL_PREFIX=../../../install \
+           ..
 
 dependencies/sources/gflags-$(GFLAGS_TAG)/CMakeLists.txt:
 	git clone --quiet -b v$(GFLAGS_TAG) https://github.com/gflags/gflags.git dependencies/sources/gflags-$(GFLAGS_TAG)
 
-# Install protocol buffers.
+# This is needed to find gflags/gflags.h
+GFLAGS_INC = -I$(UNIX_GFLAGS_DIR)/include
+GFLAGS_LNK = $(UNIX_GFLAGS_DIR)/lib/libgflags.a
+DYNAMIC_GFLAGS_LNK = $(UNIX_GFLAGS_DIR)/lib/libgflags.$(LIB_SUFFIX)
+
 install_protobuf: dependencies/install/bin/protoc
 
 dependencies/install/bin/protoc: dependencies/sources/protobuf-$(PROTOBUF_TAG)/cmake/build/Makefile
