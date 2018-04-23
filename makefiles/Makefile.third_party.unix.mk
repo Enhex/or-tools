@@ -23,11 +23,6 @@ GLOG_TAG = 0.3.5
 CBC_TAG = 2.9.9
 PATCHELF_TAG = 0.9
 
-# Detect if patchelf is needed
-ifeq ($(PLATFORM), LINUX)
-    PATCHELF=dependencies/install/bin/patchelf
-endif
-
 ifeq ($(PLATFORM), MACOSX)
   SET_COMPILER = CXX="$(CCC)"
 endif
@@ -160,6 +155,15 @@ dependencies/sources/Cbc-$(CBC_TAG)/Makefile.in:
 	tar xzf dependencies/archives/Cbc-${CBC_TAG}.tgz -C dependencies/sources/
 
 # Install patchelf on linux platforms.
+
+############################################
+##  Install Patchelf on linux platforms.  ##
+############################################
+# Detect if patchelf is needed
+ifeq ($(PLATFORM), LINUX)
+  PATCHELF=dependencies/install/bin/patchelf
+endif
+
 dependencies/install/bin/patchelf: dependencies/sources/patchelf-$(PATCHELF_TAG)/Makefile
 	cd dependencies/sources/patchelf-$(PATCHELF_TAG) && make && make install
 
