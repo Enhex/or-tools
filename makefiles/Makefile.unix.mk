@@ -2,13 +2,8 @@
 #  ----- configuration is not standard. In that case, please tell us -----
 #  ----- about it. -----
 
-MKDIR = mkdir
-MKDIR_P = mkdir -p
-COPY = cp
-TOUCH = touch
 LIB_PREFIX = lib
-ifeq ($(PLATFORM),MACOSX)
-# Keep the path in the lib as it is stored upon construction.
+ifeq ($(PLATFORM),MACOSX) # Keep the path in the lib as it is stored upon construction.
 LIB_DIR = $(OR_ROOT_FULL)/lib
 else # No need to keep the path in the lib, it is not stored there on linux.
 LIB_DIR = $(OR_ROOT)lib
@@ -21,26 +16,30 @@ EX_DIR  = $(OR_ROOT)examples
 INC_DIR = $(OR_ROOT).
 DEP_BIN_DIR = $(OR_ROOT)dependencies/install/bin
 
-
 O = o
 E =
 L=.a
 DLL=.dll
 PDB=.pdb
 EXP=.exp
+ARCHIVE_EXT = .tar.gz
+FZ_EXE = fzn-or-tools$E
 LDOUT = -o # need the space.
 OBJ_OUT = -o #
 EXE_OUT = -o #
-DEL = rm -f
-DELREC = rm -rf
-RENAME = mv
 S = /
 CPSEP = :
-SED = sed
+
+COPY = cp
+DEL = rm -f
+DELREC = rm -rf
 GREP = grep
+MKDIR = mkdir
+MKDIR_P = mkdir -p
+RENAME = mv
+SED = sed
+TOUCH = touch
 WHICH = which
-ARCHIVE_EXT = .tar.gz
-FZ_EXE = fzn-or-tools$E
 
 CMAKE := $(shell $(WHICH) cmake)
 ifeq ($(CMAKE),)
