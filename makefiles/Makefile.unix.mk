@@ -203,20 +203,6 @@ ifeq ($(PLATFORM),MACOSX)
   GLOG_LNK = $(UNIX_GLOG_DIR)/lib/libglog.a
   PROTOBUF_LNK = $(UNIX_PROTOBUF_DIR)/lib/libprotobuf.a
 
-  SYS_LNK =
-
-  JAVA_INC = -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/darwin
-  JAVAC_BIN = $(shell $(WHICH) $(JAVA_HOME)/bin/javac)
-  JAVA_BIN = $(shell $(WHICH) $(JAVA_HOME)/bin/java)
-  JAR_BIN = $(shell $(WHICH) $(JAVA_HOME)/bin/jar)
-
-  PRE_LIB = -L$(OR_ROOT)lib -l
-  POST_LIB =
-  LIB_SUFFIX = dylib
-  SWIG_LIB_SUFFIX = so# To overcome a bug in Mac OS X loader.
-  LINK_CMD = ld -arch x86_64 -dylib -flat_namespace -undefined suppress -macosx_version_min $(MAC_MIN_VERSION) -lSystem -compatibility_version $(OR_TOOLS_SHORT_VERSION) -current_version $(OR_TOOLS_SHORT_VERSION)
-  LINK_PREFIX = -o # Space needed.
-
   ifdef UNIX_CBC_DIR
     # Check wether CBC need a coin subdir in library.
     ifneq ($(wildcard $(UNIX_CBC_DIR)/lib/coin),)
@@ -245,6 +231,20 @@ ifeq ($(PLATFORM),MACOSX)
   ifdef UNIX_CPLEX_DIR
     CPLEX_LNK = -force_load $(UNIX_CPLEX_DIR)/cplex/lib/x86-64_osx/static_pic/libcplex.a -lm -lpthread -framework CoreFoundation -framework IOKit
   endif
+
+  SYS_LNK =
+
+  JAVA_INC = -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/darwin
+  JAVAC_BIN = $(shell $(WHICH) $(JAVA_HOME)/bin/javac)
+  JAVA_BIN = $(shell $(WHICH) $(JAVA_HOME)/bin/java)
+  JAR_BIN = $(shell $(WHICH) $(JAVA_HOME)/bin/jar)
+
+  PRE_LIB = -L$(OR_ROOT)lib -l
+  POST_LIB =
+  LIB_SUFFIX = dylib
+  SWIG_LIB_SUFFIX = so# To overcome a bug in Mac OS X loader.
+  LINK_CMD = ld -arch x86_64 -dylib -flat_namespace -undefined suppress -macosx_version_min $(MAC_MIN_VERSION) -lSystem -compatibility_version $(OR_TOOLS_SHORT_VERSION) -current_version $(OR_TOOLS_SHORT_VERSION)
+  LINK_PREFIX = -o # Space needed.
 endif  # MAC OS X
 
 CFLAGS = $(DEBUG) -I$(INC_DIR) -I$(EX_DIR) -I$(GEN_DIR) \
