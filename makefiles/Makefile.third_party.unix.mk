@@ -104,6 +104,33 @@ GFLAGS_INC = -I$(UNIX_GFLAGS_DIR)/include
 GFLAGS_LNK = $(UNIX_GFLAGS_DIR)/lib/libgflags.a
 DYNAMIC_GFLAGS_LNK = $(UNIX_GFLAGS_DIR)/lib/libgflags.$(LIB_SUFFIX)
 
+############
+##  GLOG  ##
+############
+# This uses glog cmake-based build.
+install_glog: dependencies/install/include/glog/logging.h
+
+dependencies/install/include/glog/logging.h: dependencies/sources/glog-$(GLOG_TAG)/build_cmake/Makefile
+	cd dependencies/sources/glog-$(GLOG_TAG)/build_cmake && $(SET_COMPILER) make -j 4 && make install
+	touch $@
+
+dependencies/sources/glog-$(GLOG_TAG)/build_cmake/Makefile: dependencies/sources/glog-$(GLOG_TAG)/CMakeLists.txt | install_gflags
+	-$(MKDIR) dependencies/sources/glog-$(GLOG_TAG)/build_cmake
+	cd dependencies/sources/glog-$(GLOG_TAG)/build_cmake && \
+	$(CMAKE) -D CMAKE_PREFIX_PATH="$(OR_TOOLS_TOP)/dependencies/install" \
+           -D BUILD_SHARED_LIBS=OFF \
+           -D CMAKE_CXX_FLAGS="-fPIC $(MAC_VERSION)" \
+           -D CMAKE_INSTALL_PREFIX=../../../install \
+           ..
+
+dependencies/sources/glog-$(GLOG_TAG)/CMakeLists.txt:
+	git clone --quiet -b v$(GLOG_TAG) https://github.com/google/glog.git dependencies/sources/glog-$(GLOG_TAG)
+
+# This is needed to find sparse hash containers.
+GLOG_INC = -I$(UNIX_GLOG_DIR)/include
+GLOG_LNK = $(UNIX_GLOG_DIR)/lib/libglog.a
+DYNAMIC_GLOG_LNK = $(UNIX_GLOG_DIR)/lib/libglog.$(LIB_SUFFIX)
+
 install_protobuf: dependencies/install/bin/protoc
 
 dependencies/install/bin/protoc: dependencies/sources/protobuf-$(PROTOBUF_TAG)/cmake/build/Makefile
@@ -122,25 +149,6 @@ dependencies/sources/protobuf-$(PROTOBUF_TAG)/cmake/CMakeLists.txt:
 	git clone --quiet https://github.com/google/protobuf.git dependencies/sources/protobuf-$(PROTOBUF_TAG) && \
 		cd dependencies/sources/protobuf-$(PROTOBUF_TAG) && \
 		git checkout tags/v$(PROTOBUF_TAG) -b $(PROTOBUF_TAG)
-
-# Install GLOG.
-install_glog: dependencies/install/include/glog/logging.h
-
-dependencies/install/include/glog/logging.h: dependencies/sources/glog-$(GLOG_TAG)/build_cmake/Makefile
-	cd dependencies/sources/glog-$(GLOG_TAG)/build_cmake && $(SET_COMPILER) make -j 4 && make install
-	touch $@
-
-dependencies/sources/glog-$(GLOG_TAG)/build_cmake/Makefile: dependencies/sources/glog-$(GLOG_TAG)/CMakeLists.txt | install_gflags
-	-$(MKDIR) dependencies/sources/glog-$(GLOG_TAG)/build_cmake
-	cd dependencies/sources/glog-$(GLOG_TAG)/build_cmake && \
-	  $(CMAKE) -D CMAKE_INSTALL_PREFIX=../../../install \
-                   -D BUILD_SHARED_LIBS=OFF \
-                   -D CMAKE_CXX_FLAGS="-fPIC $(MAC_VERSION)" \
-                   -D CMAKE_PREFIX_PATH="$(OR_TOOLS_TOP)/dependencies/install" \
-	           ..
-
-dependencies/sources/glog-$(GLOG_TAG)/CMakeLists.txt:
-	git clone --quiet -b v$(GLOG_TAG) https://github.com/google/glog.git dependencies/sources/glog-$(GLOG_TAG)
 
 # Install Coin CBC.
 install_cbc: dependencies/install/bin/cbc
