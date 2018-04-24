@@ -128,7 +128,6 @@ dependencies/sources/glog-$(GLOG_TAG)/build_cmake/Makefile: dependencies/sources
 dependencies/sources/glog-$(GLOG_TAG)/CMakeLists.txt:
 	git clone --quiet -b v$(GLOG_TAG) https://github.com/google/glog.git dependencies/sources/glog-$(GLOG_TAG)
 
-# This is needed to find sparse hash containers.
 GLOG_INC = -I$(UNIX_GLOG_DIR)/include
 GLOG_LNK = $(UNIX_GLOG_DIR)/lib/libglog.a
 DYNAMIC_GLOG_LNK = -L$(UNIX_GLOG_DIR)/lib -lglog
