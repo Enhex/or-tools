@@ -8,7 +8,7 @@ help_third_party:
 UNIX_GFLAGS_DIR ?= $(OR_TOOLS_TOP)/dependencies/install
 UNIX_GLOG_DIR ?= $(OR_TOOLS_TOP)/dependencies/install
 UNIX_PROTOBUF_DIR ?= $(OR_TOOLS_TOP)/dependencies/install
-UNIX_CBC_DIR ?= $(OR_ROOT_FULL)/dependencies/install
+UNIX_CBC_DIR ?= $(OR_TOOLS_TOP)/dependencies/install
 UNIX_CLP_DIR ?= $(UNIX_CBC_DIR)
 UNIX_CGL_DIR ?= $(UNIX_CBC_DIR)
 UNIX_OSI_DIR ?= $(UNIX_CBC_DIR)
@@ -218,7 +218,7 @@ CLP_SWIG = $(CLP_INC)
 ifneq ($(wildcard $(UNIX_CLP_DIR)/lib/coin),)
  UNIX_CLP_COIN = /coin
 endif
-CLP_LNK = $(UNIX_CLP_DIR)/lib$(UNIX_CLP_COIN)/libClpSolver.a \
+CLP_LNK = $(UNIX_CBC_DIR)/lib$(UNIX_CLP_COIN)/libClpSolver.a \
           $(UNIX_CLP_DIR)/lib$(UNIX_CLP_COIN)/libClp.a \
           $(UNIX_CLP_DIR)/lib$(UNIX_CLP_COIN)/libOsiClp.a
 DYNAMIC_CLP_LNK = -L$(UNIX_CLP_DIR)/lib$(UNIX_CLP_COIN) -lClpSolver -lClp -lOsiClp
@@ -263,16 +263,19 @@ COIN_INC = $(COINUTILS_INC) \
            $(CLP_INC) \
            $(CBC_INC)
 COIN_SWIG = $(COIN_INC)
-COIN_LNK = $(COINUTILS_LNK) \
-           $(OSI_LNK) \
-           $(CGL_LNK) \
+COIN_LNK = \
+					 $(CBC_LNK) \
            $(CLP_LNK) \
-           $(CBC_LNK)
-DYNAMIC_COIN_LNK = $(DYNAMIC_COINUTILS_LNK) \
-                   $(DYNAMIC_OSI_LNK) \
-                   $(DYNAMIC_CGL_LNK) \
+           $(CGL_LNK) \
+           $(OSI_LNK) \
+           $(COINUTILS_LNK)
+
+DYNAMIC_COIN_LNK = \
+                   $(DYNAMIC_CBC_LNK) \
                    $(DYNAMIC_CLP_LNK) \
-                   $(DYNAMIC_CBC_LNK)
+                   $(DYNAMIC_CGL_LNK) \
+                   $(DYNAMIC_OSI_LNK) \
+									 $(DYNAMIC_COINUTILS_LNK)
 
 ##################################
 ##  USE DYNAMIC DEPENDENCIES ?  ##
