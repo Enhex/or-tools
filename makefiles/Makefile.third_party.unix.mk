@@ -208,8 +208,7 @@ endif
 CBC_LNK = $(UNIX_CBC_DIR)/lib$(UNIX_CBC_COIN)/libCbcSolver.a \
           $(UNIX_CBC_DIR)/lib$(UNIX_CBC_COIN)/libCbc.a \
           $(UNIX_CBC_DIR)/lib$(UNIX_CBC_COIN)/libOsiCbc.a
-DYNAMIC_CBC_LNK = -L$(UNIX_CBC_DIR)/lib$(UNIX_CBC_COIN) \
-									-lCbcSolver -lCbc -lOsiCbc
+DYNAMIC_CBC_LNK = -L$(UNIX_CBC_DIR)/lib$(UNIX_CBC_COIN) -lCbcSolver -lCbc -lOsiCbc
 
 # This is needed to find CLP include files.
 CLP_COIN_DIR = $(firstword $(wildcard $(UNIX_CLP_DIR)/include/clp/coin \
@@ -222,8 +221,7 @@ endif
 CLP_LNK = $(UNIX_CLP_DIR)/lib$(UNIX_CLP_COIN)/libClpSolver.a \
           $(UNIX_CLP_DIR)/lib$(UNIX_CLP_COIN)/libClp.a \
           $(UNIX_CLP_DIR)/lib$(UNIX_CLP_COIN)/libOsiClp.a
-DYNAMIC_CLP_LNK = -L$(UNIX_CLP_DIR)/lib$(UNIX_CLP_COIN) \
-									-lClpSolver -lClp -lOsiClp
+DYNAMIC_CLP_LNK = -L$(UNIX_CLP_DIR)/lib$(UNIX_CLP_COIN) -lClpSolver -lClp -lOsiClp
 
 # This is needed to find CGL include files.
 CGL_COIN_DIR = $(firstword $(wildcard $(UNIX_CGL_DIR)/include/cgl/coin \
@@ -234,8 +232,7 @@ ifneq ($(wildcard $(UNIX_CGL_DIR)/lib/coin),)
  UNIX_CGL_COIN = /coin
 endif
 CGL_LNK = $(UNIX_CGL_DIR)/lib$(UNIX_CGL_COIN)/libCgl.a
-DYNAMIC_CLP_LNK = -L$(UNIX_CGL_DIR)/lib$(UNIX_CGL_COIN) \
-									-lCgl
+DYNAMIC_CGL_LNK = -L$(UNIX_CGL_DIR)/lib$(UNIX_CGL_COIN) -lCgl
 
 # This is needed to find OSI include files.
 OSI_COIN_DIR = $(firstword $(wildcard $(UNIX_OSI_DIR)/include/osi/coin \
@@ -246,8 +243,7 @@ ifneq ($(wildcard $(UNIX_OSI_DIR)/lib/coin),)
  UNIX_OSI_COIN = /coin
 endif
 OSI_LNK = $(UNIX_OSI_DIR)/lib$(UNIX_OSI_COIN)/libOsi.a
-DYNAMIC_OSI_LNK = -L$(UNIX_OSI_DIR)/lib$(UNIX_OSI_COIN) \
-									-lOsi
+DYNAMIC_OSI_LNK = -L$(UNIX_OSI_DIR)/lib$(UNIX_OSI_COIN) -lOsi
 
 # This is needed to find COINUTILS include files.
 COINUTILS_COIN_DIR = $(firstword $(wildcard $(UNIX_COINUTILS_DIR)/include/coinutils/coin \
@@ -258,41 +254,40 @@ ifneq ($(wildcard $(UNIX_COINUTILS_DIR)/lib/coin),)
  UNIX_COINUTILS_COIN = /coin
 endif
 COINUTILS_LNK = $(UNIX_COINUTILS_DIR)/lib$(UNIX_COINUTILS_COIN)/libCoinUtils.a
-DYNAMIC_COINUTILS_LNK = -L$(UNIX_COINUTILS_DIR)/lib$(UNIX_COINUTILS_COIN) \
-									-lCoinUtils
+DYNAMIC_COINUTILS_LNK = -L$(UNIX_COINUTILS_DIR)/lib$(UNIX_COINUTILS_COIN) -lCoinUtils
 
 # Agregate all previous coin packages
 COIN_INC = $(COINUTILS_INC) \
-					 $(OSI_INC) \
-					 $(CGL_INC) \
-					 $(CLP_INC) \
-					 $(CBC_INC)
+           $(OSI_INC) \
+           $(CGL_INC) \
+           $(CLP_INC) \
+           $(CBC_INC)
 COIN_SWIG = $(COIN_INC)
 COIN_LNK = $(COINUTILS_LNK) \
-					 $(OSI_LNK) \
-					 $(CGL_LNK) \
-					 $(CLP_LNK) \
-					 $(CBC_LNK)
+           $(OSI_LNK) \
+           $(CGL_LNK) \
+           $(CLP_LNK) \
+           $(CBC_LNK)
 DYNAMIC_COIN_LNK = $(DYNAMIC_COINUTILS_LNK) \
-									 $(DYNAMIC_OSI_LNK) \
-									 $(DYNAMIC_CGL_LNK) \
-									 $(DYNAMIC_CLP_LNK) \
-									 $(DYNAMIC_CBC_LNK)
+                   $(DYNAMIC_OSI_LNK) \
+                   $(DYNAMIC_CGL_LNK) \
+                   $(DYNAMIC_CLP_LNK) \
+                   $(DYNAMIC_CBC_LNK)
 
 ##################################
 ##  USE DYNAMIC DEPENDENCIES ?  ##
 ##################################
 ifdef UNIX_DYNAMIC_DEPENDENCIES
   DEPENDENCIES_LNK += \
-   $(DYNAMIC_GFLAGS_LNK) $(DYNAMIC_GLOG_LNK) $(DYNAMIC_PROTOBUF_LNK) \
-   $(DYNAMIC_COIN_LNK)
-	OR_TOOLS_LNK += \
-	$(DYNAMIC_GFLAGS_LNK) $(DYNAMIC_GLOG_LNK) $(DYNAMIC_PROTOBUF_LNK) \
-  $(DYNAMIC_COIN_LNK)
+    $(DYNAMIC_GFLAGS_LNK) $(DYNAMIC_GLOG_LNK) $(DYNAMIC_PROTOBUF_LNK) \
+    $(DYNAMIC_COIN_LNK)
+  OR_TOOLS_LNK += \
+    $(DYNAMIC_GFLAGS_LNK) $(DYNAMIC_GLOG_LNK) $(DYNAMIC_PROTOBUF_LNK) \
+    $(DYNAMIC_COIN_LNK)
 else
   DEPENDENCIES_LNK += \
-   $(GFLAGS_LNK) $(GLOG_LNK) $(PROTOBUF_LNK) \
-   $(COIN_LNK)
+    $(GFLAGS_LNK) $(GLOG_LNK) $(PROTOBUF_LNK) \
+    $(COIN_LNK)
 endif
 
 ############################################
