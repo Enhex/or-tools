@@ -102,7 +102,6 @@ dependencies/sources/gflags-$(GFLAGS_TAG)/build_cmake/Makefile: dependencies/sou
 dependencies/sources/gflags-$(GFLAGS_TAG)/CMakeLists.txt:
 	git clone --quiet -b v$(GFLAGS_TAG) https://github.com/gflags/gflags.git dependencies/sources/gflags-$(GFLAGS_TAG)
 
-# This is needed to find gflags/gflags.h
 GFLAGS_INC = -I$(UNIX_GFLAGS_DIR)/include
 GFLAGS_LNK = $(UNIX_GFLAGS_DIR)/lib/libgflags.a
 DYNAMIC_GFLAGS_LNK = -L$(UNIX_GFLAGS_DIR)/lib -lgflags
