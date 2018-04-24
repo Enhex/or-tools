@@ -102,7 +102,7 @@ dependencies/sources/gflags-$(GFLAGS_TAG)/CMakeLists.txt:
 # This is needed to find gflags/gflags.h
 GFLAGS_INC = -I$(UNIX_GFLAGS_DIR)/include
 GFLAGS_LNK = $(UNIX_GFLAGS_DIR)/lib/libgflags.a
-DYNAMIC_GFLAGS_LNK = $(UNIX_GFLAGS_DIR)/lib/libgflags.$(LIB_SUFFIX)
+DYNAMIC_GFLAGS_LNK = -L$(UNIX_GFLAGS_DIR)/lib -lgflags
 
 ############
 ##  GLOG  ##
@@ -129,7 +129,7 @@ dependencies/sources/glog-$(GLOG_TAG)/CMakeLists.txt:
 # This is needed to find sparse hash containers.
 GLOG_INC = -I$(UNIX_GLOG_DIR)/include
 GLOG_LNK = $(UNIX_GLOG_DIR)/lib/libglog.a
-DYNAMIC_GLOG_LNK = $(UNIX_GLOG_DIR)/lib/libglog.$(LIB_SUFFIX)
+DYNAMIC_GLOG_LNK = -L$(UNIX_GLOG_DIR)/lib -lglog
 
 ################
 ##  Protobuf  ##
@@ -172,8 +172,7 @@ PROTOBUF_PROTOC_INC = $(PROTOBUF_INC)
 # "lib/x86_64-linux-gnu/" for Ubuntu (all on 64 bits), etc. So we wildcard it.
 PROTOBUF_LNK = $(wildcard $(UNIX_PROTOBUF_DIR)/lib*/libprotobuf.a \
                           $(UNIX_PROTOBUF_DIR)/lib/*/libprotobuf.a)
-DYNAMIC_PROTOBUF_LNK = $(wildcard $(UNIX_PROTOBUF_DIR)/lib*/libprotobuf.$(LIB_SUFFIX) \
-                                  $(UNIX_PROTOBUF_DIR)/lib/*/libprotobuf.$(LIB_SUFFIX))
+DYNAMIC_PROTOBUF_LNK = -L$(dir $(PROTOBUF_LNK)) -lprotobuf
 
 ###################
 ##  COIN-OR CBC  ##
@@ -226,15 +225,12 @@ CBC_LNK = $(UNIX_CBC_DIR)/lib$(UNIX_CBC_COIN)/libCbcSolver.a \
 CLP_LNK = $(UNIX_CBC_DIR)/lib$(UNIX_CBC_COIN)/libClpSolver.a \
           $(UNIX_CLP_DIR)/lib$(UNIX_CLP_COIN)/libClp.a \
           $(UNIX_CLP_DIR)/lib$(UNIX_CLP_COIN)/libOsiClp.a
-DYNAMIC_COIN_LNK = $(UNIX_CLP_DIR)/lib$(UNIX_CLP_COIN)/libCoinUtils.$(LIB_SUFFIX) \
-                   $(UNIX_CBC_DIR)/lib$(UNIX_CBC_COIN)/libCgl.$(LIB_SUFFIX) \
-                   $(UNIX_CBC_DIR)/lib$(UNIX_CBC_COIN)/libOsi.$(LIB_SUFFIX)
-DYNAMIC_CBC_LNK = $(UNIX_CBC_DIR)/lib$(UNIX_CBC_COIN)/libCbcSolver.$(LIB_SUFFIX) \
-                  $(UNIX_CBC_DIR)/lib$(UNIX_CBC_COIN)/libCbc.$(LIB_SUFFIX) \
-                  $(UNIX_CBC_DIR)/lib$(UNIX_CBC_COIN)/libOsiCbc.$(LIB_SUFFIX)
-DYNAMIC_CLP_LNK = $(UNIX_CBC_DIR)/lib$(UNIX_CBC_COIN)/libClpSolver.$(LIB_SUFFIX) \
-                  $(UNIX_CLP_DIR)/lib$(UNIX_CLP_COIN)/libClp.$(LIB_SUFFIX) \
-                  $(UNIX_CLP_DIR)/lib$(UNIX_CLP_COIN)/libOsiClp.$(LIB_SUFFIX)
+DYNAMIC_COIN_LNK = -L$(UNIX_CLP_DIR)/lib$(UNIX_CBC_COIN) \
+									 -lCoinUtils -lCgl -lOsi
+DYNAMIC_CBC_LNK = -L$(UNIX_CBC_DIR)/lib$(UNIX_CBC_COIN) \
+									-lCbcSolver -lCbc -lOsiCbc
+DYNAMIC_CLP_LNK = -L$(UNIX_CBC_DIR)/lib$(UNIX_CBC_COIN) \
+									-lClpSolver -lClp -lOsiClp
 
 ##################################
 ##  USE DYNAMIC DEPENDENCIES ?  ##
